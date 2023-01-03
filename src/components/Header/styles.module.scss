@@ -1,0 +1,81 @@
+
+.sidebar{
+    width: 242px;
+    background: linear-gradient(107.54deg, #1960CB 0%, #417AAE 100%);
+    position: fixed;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    overflow: auto;
+    flex-direction: column;
+    align-content: center;
+    flex-wrap: wrap;
+    .group{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-wrap: nowrap;
+        .logo{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            padding: 2em;
+        }
+        button{
+            align-items: center;
+            background: #2C2A91;
+            border: none;
+            border-radius: 5px;
+            color: #FFF;
+            display: flex;
+            justify-content: center;
+            width: 10em;
+            margin-top: 1em;
+            padding: 0.5em 1em;
+            text-decoration: none;
+            text-align: center;
+            transition: ease-in-out 0.4s;
+            &:hover{
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+                animation-fill-mode: backwards;
+                background: #64b7d8;        }
+        }
+    }
+    .exit{
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+        padding: 2em;
+        margin: 0;
+        h1{
+            font-family: 'Arial';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 24px;
+            line-height: 28px;
+            /* identical to box height */
+    
+            display: flex;
+            align-items: center;
+            text-align: center;
+            letter-spacing: -0.015em;
+            cursor: pointer;
+            color: #FFFFFF;
+            transition: ease-in-out 0.4s;
+            &:hover{
+                animation-fill-mode: backwards;
+                color: #2C2A91;        }
+        }
+    }
+  }
+
+  .content{
+    margin-left: 354px;
+    padding: 1px 0px;
+  }
