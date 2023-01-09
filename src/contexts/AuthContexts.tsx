@@ -69,23 +69,31 @@ export function AuthProvider({ children }: AuthProviderProps){
 
         ////console.log(token)
     
-/*         if(token){
-          api.put('/auth/refreshtoken').then(response => {
-            const { idusu_usu, nivel_usu, token } = response.data;
+        if(token){
+          api.put('/auth/refreshtoken',{
+            oldtoken: token
+          }).then(response => {
+            const {status,message, novo} = response.data;
+            console.log('**************** token: ' + JSON.stringify(token) + "('**************** dados: " + JSON.stringify(response) )
+
+            setCookie(undefined,'@nextauth.token', novo['token'],{
+                maxAge: 60 * 60 * 24 * 30,
+                path: "/" // Quais caminhos terao acesso ao cookie
+            })
     
             ////console.log('**************** dados: ' + idusu_usu)
             setUsuario({
-                idusu_usu,
-                nivel_usu,
-                token
+                status,
+                message,
+                novo
             })
     
           })
           .catch(() => {
             //Se deu erro deslogamos o user.
-            signOut();
+            //signOut();
           })
-        } */
+        }
     
     
       }, [])

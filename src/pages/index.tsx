@@ -46,14 +46,6 @@ export default function Home() {
         <title>Login</title>
       </Head>
       <div className={styles.container}>
-{/*         <div className={styles.loginEsquerda}>
-          <Image
-          className={styles.imglogin}
-          src={imgLogin}
-          />
-        </div> */}
-
-{/*         <div className={styles.loginDireita}> */}
           <form  onSubmit={handleLogin}>
             <h1 className={styles.titulo}>Login</h1>
             
@@ -80,6 +72,7 @@ export default function Home() {
 
             <span className={styles.logoAtma}>
               <Image
+              alt="Imagem logo Atma"
               src={imgLogoAtma}
               />
             </span>

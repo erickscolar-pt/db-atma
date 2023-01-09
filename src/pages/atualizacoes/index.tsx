@@ -2,14 +2,13 @@ import { canSSRAuth } from "../../utils/canSSRAuth"
 import styles from './styles.module.scss';
 import Head from "next/head";
 import Header from '../../components/Header'
-import Footer from "../../components/Footer";
-import Link from "next/link";
-import { FaSearch } from "react-icons/fa";
-import { useRouter } from "next/router";
+import { MdDoneAll } from "react-icons/md";
 import { setupAPIClient } from "../../services/api";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import InputMask from 'react-input-mask'
+import Router,{ useRouter } from 'next/router'
+
 
 type ItemPropsFuncionarios = {
     idfunc_func: number,
@@ -37,68 +36,83 @@ type ItemPropsFuncionarios = {
 interface ListaFuncionario{
     listaFuncionario: ItemPropsFuncionarios[]
 }
-export default function VencidoAtendimento({listaFuncionario}:ListaFuncionario){
+export default function Atualizacoes({listaFuncionario}:ListaFuncionario){
 
-    const [idUser, setIdUser] = useState(0)  
-    const [nome, setNome] = useState('');
-    const [cpf, setCpf] = useState('');
-    const [telefone, setTelefone] = useState('');
-    const [plano, setPlano] = useState(0);
-    const [dataVencimento, setDataVencimento] = useState('');
-    const [valorEntrada, setValorEntrada] = useState('');
-    const [valorDemais, setValorDemais] = useState('');
-    const [tabulacao, setTabulacao] = useState('');
-    const [origemAtendimento, setOrigemAtendimento] = useState('');
-    const [idMotivo, setIdMotivo] = useState('');
-    const [idUsuario, setIdUsuario] = useState('');
-    const [saldoRisco, setSaldoRisco] = useState('');
-    const router = useRouter()
-    const param = router.asPath
     const [funcionarios, setFuncionarios] = useState(listaFuncionario || [])
-    const [motivoSelect, setMotivoSelect] = useState<any>()
 
-    var btnactive:boolean = false
+    /* deminido */
+    const [checkSistemaDemitido, setCheckSistemaDemitido] = useState(0)
+    const [checkTrueOrFalseSistemaDemitido, setCheckTrueOrFalseSistemaDemitido] = useState()
+    const [checkTiDemitido, setCheckTiDemitido] = useState(0)
+    const [checkTrueOrFalseTiDemitido, setCheckTrueOrFalseTiDemitido] = useState()
+    const [checkControlDemitido, setCheckControlDemitido] = useState(0)
+    const [checkTrueOrFalseControlDemitido, setCheckTrueOrFalseControlDemitido] = useState()
 
-    const mask = (v: string) => {
-        v = v.replace(/\D/g, "")
-        
-        if (v.length <= 11) {
-        v = v.replace(/(\d{3})(\d)/, "$1.$2")
-        v = v.replace(/(\d{3})(\d)/, "$1.$2")
-        v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2")
-        } else {
-        v = v.substring(0, 14); // limita em 14 números
-        v = v.replace(/^(\d{2})(\d)/, "$1.$2")
-        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
-        v = v.replace(/\.(\d{3})(\d)/, ".$1/$2")
-        v = v.replace(/(\d{4})(\d)/, "$1-$2")
-        }
-        
-        return v
-        }
 
-    useEffect(() => {
-        if (window) { 
-          // set props data to session storage or local storage  
-          setIdUser(parseInt(sessionStorage.getItem('id')))
-        }
-    }, []);
-    const id = idUser
-
-    if(param == '/vencidonegociacao'){
-        btnactive = true;
+    /* funcionalidades demitido */
+    function selectSistemaDemitido(event){
+        setCheckSistemaDemitido(event.target.value)
+        setCheckTrueOrFalseSistemaDemitido(event.target.checked)
     }
-
-    function selectMotivo(event){
-
-        ////console.log("posição", event.target.value)
-        ////console.log("selecionado", listMotivo[event.target.value])
-
-        setMotivoSelect(event.target.value)
-
+    
+    if(checkTrueOrFalseSistemaDemitido == true){
+        handleRegistro(checkSistemaDemitido,1,'sistema')
     }
+    
+    function selectTiDemitido(event){
+        setCheckTiDemitido(event.target.value)
+        setCheckTrueOrFalseTiDemitido(event.target.checked)
+    }
+    if(checkTrueOrFalseTiDemitido == true){
+        handleRegistro(checkTiDemitido,1,'ti')
+    }
+    
+    function selectControlDemitido(event){
+        setCheckControlDemitido(event.target.value)
+        setCheckTrueOrFalseControlDemitido(event.target.checked)
+    }
+    
+    if(checkTrueOrFalseControlDemitido == true){
+        handleRegistro(checkControlDemitido,1,'control')
+    }
+    /* fim funcionalidades demitido */
+    
+    /* registro */
+    async function handleRegistro(idfunc_func,sis_func,area){
 
+        const apiClient = setupAPIClient();
+        const JSON_REGRA = []
 
+        if(area === 'sistema'){
+            JSON_REGRA.push({
+                idfunc_func: parseInt(idfunc_func),
+                sis_func: sis_func
+            })
+        }
+
+        if(area === 'ti'){
+            JSON_REGRA.push({
+                idfunc_func: parseInt(idfunc_func),
+                ti_func: sis_func
+            })
+        }
+
+        if(area === 'control'){
+            JSON_REGRA.push({
+                idfunc_func: parseInt(idfunc_func),
+                ctrl_func: sis_func
+            })
+        }
+
+        console.log(JSON_REGRA[0])
+        await apiClient.put('/funcionario',JSON_REGRA[0]).then(()=>{
+            Router.reload()
+            toast.success('Check!')
+        }).catch((err)=>{
+            console.log(err)
+            toast.error('erro ao gravar')
+        })
+    }
 
     return(
         <>
@@ -128,7 +142,10 @@ export default function VencidoAtendimento({listaFuncionario}:ListaFuncionario){
                 {funcionarios?.map((funcionario)=>{
                     return(
                         <tr key={funcionario.idatma_func}>
-                        {funcionario.dtdem_func == null ? 
+                        {funcionario.dtdem_func == null || 
+                         funcionario.sis_func === 1 &&
+                         funcionario.ti_func === 1 &&
+                         funcionario.ctrl_func === 1 ? 
                             <></> : 
                             <>
                             <td>{funcionario.nome_func}</td>
@@ -137,9 +154,27 @@ export default function VencidoAtendimento({listaFuncionario}:ListaFuncionario){
                             <td>{funcionario.hent_func} ás {funcionario.hsai_func}</td>
                             <td>{funcionario.tpcon_func == 'PADRAO1'?<>CLT</>:<>{funcionario.tpcon_func}</>}</td>
                             <td>{funcionario.chmes_func}</td>
-                            <td><label className={styles.container}><input type="checkbox"/><span></span></label></td>
-                            <td><input type="checkbox"/></td>
-                            <td><input type="checkbox"/></td>
+                            <td>
+                                {
+                                    funcionario.sis_func === 1 ? 
+                                    <MdDoneAll size={20}/> :
+                                    <input type="checkbox" onChange={selectSistemaDemitido} value={funcionario.idfunc_func}/>
+                                }
+                            </td>
+                            <td>
+                                {
+                                    funcionario.ti_func === 1 ? 
+                                    <MdDoneAll size={20}/> :
+                                    <input type="checkbox" onChange={selectTiDemitido} value={funcionario.idfunc_func}/>
+                                }
+                            </td>
+                            <td>
+                                {
+                                    funcionario.ctrl_func === 1 ? 
+                                    <MdDoneAll size={20}/> :
+                                    <input type="checkbox" onChange={selectControlDemitido} value={funcionario.idfunc_func}/>
+                                }
+                            </td>
                             </>
                         }
 
@@ -179,9 +214,9 @@ export default function VencidoAtendimento({listaFuncionario}:ListaFuncionario){
                             <td>{funcionario.hent_func} ás {funcionario.hsai_func}</td>
                             <td>{funcionario.tpcon_func == 'PADRAO1'?<>CLT</>:<>{funcionario.tpcon_func}</>}</td>
                             <td>{funcionario.chmes_func}</td>
-                            <td><input type="checkbox"/></td>
-                            <td><input type="checkbox"/></td>
-                            <td><input type="checkbox"/></td>
+                            <td><input type="checkbox" value="1"/></td>
+                            <td><input type="checkbox" value="1"/></td>
+                            <td><input type="checkbox" value="1"/></td>
                             </>
                         }
 
@@ -191,7 +226,6 @@ export default function VencidoAtendimento({listaFuncionario}:ListaFuncionario){
                 </tbody>
             </table>
         </div>
-            <Footer/>
         </div>
         </>
     )

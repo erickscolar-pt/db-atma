@@ -5,10 +5,10 @@
     .boxFilter{
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
-        align-content: center;
+        flex-wrap: nowrap;
         align-items: center;
-        justify-content: space-evenly;
+        justify-content: space-around;
+        align-content: center;
         .filter{
             display: flex;
             flex-direction: row;
@@ -24,8 +24,8 @@
                 align-content: center;
                 justify-content: center;
                 align-items: center;
-                margin-left: 1em;
-                margin-right: 1em;
+                margin-left: .5em;
+                margin-right: .5em;
                 h1{
                     font-family: 'Arial';
                     font-style: normal;
@@ -46,9 +46,9 @@
                     font-family: 'Arial';
                     font-style: normal;
                     font-weight: 400;
-                    font-size: 1em;
+                    font-size: .8em;
                     line-height: 14px;
-                    padding: .2em .6em;
+                    padding: .2em .5em;
                     margin-top: .5em;
                     /* identical to box height */
     
@@ -58,6 +58,12 @@
                     letter-spacing: -0.015em;
     
                     color: #000000;
+                    option{
+                        padding: .2em .5em;
+                        display: flex;
+                        align-items: center;
+                        text-align: center;
+                    }
                 }
             }
         }
@@ -131,7 +137,10 @@
             align-items: center;
             text-align: center;
             letter-spacing: -0.015em;
-            color: #000000;
+            color: #ffffff;
+            option{
+                color:#000000;
+            }
             }
         }
         tbody tr {

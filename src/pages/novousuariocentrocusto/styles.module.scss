@@ -1,0 +1,109 @@
+.content{
+    margin-left: 242px;
+    padding: 1px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .usuario{
+        padding: 2em;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        flex-wrap: wrap;
+        h1{
+            font-family: 'Arial';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 24px;
+            line-height: 28px;
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.015em;
+
+            color: #FFFFFF;
+        }
+        .select{
+            margin-top: 1em;
+        }
+    }
+    .remove{
+        padding: 2em;
+        h1{
+            font-family: 'Arial';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 24px;
+            line-height: 28px;
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.015em;
+
+            color: #FFFFFF;
+        }
+        .itens{
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            align-items: center;
+            padding: 2em;
+            .removeitem{
+                display: flex;
+                margin: 2px;
+                .nameitem{
+                    background: #FFFFFF;
+                    border-radius: 5px 0px 0px 5px;
+                    padding: .5em 2em;
+                    font-family: 'Arial';
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 13px;
+                    line-height: 15px;
+                    display: flex;
+                    align-items: center;
+                    text-align: center;
+                    letter-spacing: -0.015em;
+                    color: #2C2A91;
+                }
+                button{
+                    background: #b93838;
+                    border: none;
+                    border-radius: 0px 5px 5px 0px;
+                    transition: ease-in-out 0.4s;
+                    &:hover{
+                        background: #6d1313;
+                    }
+                }
+            }
+        }
+
+    }
+
+    .add{
+        padding: 2em;
+        display: flex;
+        width: 100%;
+        .item{
+            display: flex;
+            width: 100%;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-content: center;
+            align-items: stretch;
+            .select{
+                border-radius: 5px 0px 0px 5px !important;
+                margin-right: .4em;
+            }
+            button{
+                padding: .2em 1em;
+                background: #11C76F;
+                border:none;
+                border-radius: 5px;
+                transition: ease-in-out 0.4s;
+                &:hover{
+                    background: #065a31;
+                }
+            }
+        }
+    }
+}
