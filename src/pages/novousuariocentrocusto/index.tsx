@@ -18,13 +18,22 @@ type ItemPropsUsuarioCentroCusto = {
 type ItemPropsCentroCusto = {
     idccst_ccst: number,
     nome_ccst: string,
-    nivel_ccst: string
+    nivel_ccst: string,
 }
+
 type ItemPropsUsuario = {
     idusu_usu: number,
     nivel_usu: number,
     idcarg_usu: number,
     login_usu: string
+    usuccst: usuccst[];
+}
+type usuccst = {
+    centrocusto: {
+        idccst_ccst: number,
+        nome_ccst: string,
+        nivel_ccst: string
+    }
 }
 interface Listas {
     listacentrocusto: ItemPropsCentroCusto[]
@@ -202,7 +211,7 @@ export default function NovoUsuarioCentroCusto(
                             <div key={id.idccst_usucc} className={styles.nameitem}>
                                 <p>{listaCentroCusto.map((lista)=>{
                                     return(
-                                            lista.idccst_ccst == id.idccst_usucc ? lista.nivel_ccst + ' - ' + lista.nome_ccst : <></>
+                                            lista.idccst_ccst == id.idccst_usucc ? lista.idccst_ccst + ': ' + lista.nivel_ccst + ' - ' + lista.nome_ccst : <></>
                                         )
                                     })}
                                 </p>
@@ -231,10 +240,7 @@ export default function NovoUsuarioCentroCusto(
 
                 </div>
             </div>
-
             </form>
-        <Footer/>
-
         </div>
         </>
     )

@@ -1,0 +1,83 @@
+.content{
+    margin-left: 242px;
+    padding: 1px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    form{
+        width: 100%;
+        .usuario{
+            padding: 2em;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            flex-wrap: wrap;
+            h1{
+                font-family: 'Arial';
+                font-style: normal;
+                font-weight: 400;
+                font-size: 24px;
+                line-height: 28px;
+                display: flex;
+                align-items: center;
+                letter-spacing: -0.015em;
+    
+                color: #FFFFFF;
+            }
+            .select{
+                margin-top: 1em;
+                margin-bottom: 1em;
+            }
+            select{
+                border: none;
+                height: 25px;
+                background: #33248a;
+                border-radius: 5px;
+                margin-bottom: 1em;
+        
+                font-family: 'Arial';
+                font-style: normal;
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 7px;
+                align-items: center;
+                letter-spacing: 0.005em;
+        
+                color: #ffffff;
+            }
+
+            button{
+                font-family: "Arial";
+                font-style: normal;
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 14px;
+                display: flex;
+                align-items: center;
+                text-align: center;
+                letter-spacing: -0.015em;
+                border: none;
+                color: #FFFFFF;
+                width: 174px;
+                height: 32px;
+                left: 596px;
+                top: 507px;
+                filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
+                background: #33248a;
+                border-radius: 4px;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-content: center;
+                justify-content: center;
+                transition: all 0.3s;
+                &:hover{
+                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+                    animation-fill-mode: backwards;
+                    background: #1c1b69;        }
+            }
+        }
+    }
+
+}

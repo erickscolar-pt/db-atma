@@ -6,6 +6,7 @@ import Footer from "../../components/Footer";
 import { FormEvent, Key, useEffect, useState } from "react";
 import { setupAPIClient } from "../../services/api";
 import Select from "react-select";
+import { toast } from "react-toastify";
 
 
 type ItemPropsFuncionarios = {
@@ -63,16 +64,37 @@ export default function NovoUsuario(
         setSelectCargo(event.target.value)
     }
 
-    console.log(listaCargos)
+    async function handleRegistroUsuario(event:FormEvent){
 
-    useEffect(() => {
-        if (window) { 
-          // set props data to session storage or local storage  
-          setNivelId(parseInt(sessionStorage.getItem('nivel')))
+        event.preventDefault();
+
+        console.log(username)
+        console.log(selectCargo)
+        console.log(selectNivel)
+        const password = ''
+
+
+        if(username === '' || selectNivel === 3 || selectCargo === 9){
+            toast.warn('Preencha todos os campos')
+            return;
         }
-    }, []);
-    
-    const nivel = nivelid;
+
+            const apiClient = setupAPIClient();
+            await apiClient.post('/auth/signup',{
+                nome:username,
+                senha:password,
+                nivel: +selectNivel,
+                cargo: +selectCargo
+            }).then(()=>{
+                toast.success('gravado com sucesso')
+            }).catch((err)=>{
+                console.log(err)
+                toast.error('erro ao gravar')
+            })
+        
+
+
+    }
 
     return(
         <>
@@ -83,7 +105,7 @@ export default function NovoUsuario(
 
 
         <div className={styles.content}>
-            <form>
+            <form action="" onSubmit={handleRegistroUsuario}>
                 <input  type="text" 
                         name="email" 
                         placeholder='E-mail'
@@ -92,23 +114,22 @@ export default function NovoUsuario(
                         />
 
                 <select name="nivel" value={selectCargo} onChange={cargoSelecionado}>
-                    <option value="">Selecione o Cargo</option>
+                    <option value="9">Selecione o Cargo</option>
                     {listaCargos.map((cargo, index)=>{
                         return(
-                            <option value={index} key={cargo.idcarg_carg}>{cargo.nome_carg}</option>
+                            <option value={cargo.idcarg_carg} key={cargo.idcarg_carg}>{cargo.nome_carg}</option>
                         )
                     })}
 
                 </select>
 
                 <select name="nivel" value={selectNivel} onChange={nivelSelecionado}>
-                    <option value="">Selecione o Nivel</option>
+                    <option value="3">Selecione o Nivel</option>
                     <option value="1">Admin</option>
-                    <option value="2">Operador</option>
+                    <option value="2">Usuario</option>
                 </select>
-                <button>Registrar</button>
+                <button type='submit'>Registrar</button>
             </form>
-        <Footer/>
 
         </div>
         </>

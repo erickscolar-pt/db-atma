@@ -13,9 +13,10 @@ type AuthContextData = {
 }
 
 type UsuarioProps ={
-    status: boolean;
-    message: string;
-    novo: Novo;
+    idusu_usu?: number;
+    nivel_usu?: number;
+    cargo_usu?: number;
+    token?: string;
 }
 
 type Novo ={
@@ -70,22 +71,32 @@ export function AuthProvider({ children }: AuthProviderProps){
         ////console.log(token)
     
         if(token){
+        destroyCookie(undefined, '@nextauth.token')
+
           api.put('/auth/refreshtoken',{
             oldtoken: token
           }).then(response => {
-            const {status,message, novo} = response.data;
-            console.log('**************** token: ' + JSON.stringify(token) + "('**************** dados: " + JSON.stringify(response) )
+            const {cargo_usu,idusu_usu,nivel_usu,token } = response.data.novo;
 
-            setCookie(undefined,'@nextauth.token', novo['token'],{
+            //console.log('**************** token: ' + JSON.stringify(token) + "('**************** dados: " + JSON.stringify(response) )
+            console.log(cargo_usu)
+            console.log(idusu_usu)
+            console.log(nivel_usu)
+            console.log(token)
+
+            setCookie(undefined,'@nextauth.token', token,{
                 maxAge: 60 * 60 * 24 * 30,
                 path: "/" // Quais caminhos terao acesso ao cookie
             })
     
+            sessionStorage.setItem('id',idusu_usu)
+            sessionStorage.setItem('nivel',nivel_usu) 
             ////console.log('**************** dados: ' + idusu_usu)
             setUsuario({
-                status,
-                message,
-                novo
+                cargo_usu,
+                idusu_usu,
+                nivel_usu,
+                token
             })
     
           })
@@ -110,7 +121,7 @@ export function AuthProvider({ children }: AuthProviderProps){
             })
 
 
-            const {status,message, novo} = response.data;
+            const {cargo_usu,idusu_usu,nivel_usu,token } = response.data.novo;
 
             ////console.log(token)
             ////console.log(nivel_usu)
@@ -118,25 +129,27 @@ export function AuthProvider({ children }: AuthProviderProps){
 
                 if (window) { 
                   // set props data to session storage or local storage 
-                  sessionStorage.setItem('id',novo.idusu_usu)
-                  sessionStorage.setItem('nivel',novo.nivel_usu) 
+                  sessionStorage.setItem('id',idusu_usu)
+                  sessionStorage.setItem('nivel',nivel_usu) 
+                  sessionStorage.setItem('cargo',cargo_usu) 
                 }
 
 
 
-            setCookie(undefined,'@nextauth.token', novo.token,{
+            setCookie(undefined,'@nextauth.token', token,{
                 maxAge: 60 * 60 * 24 * 30,
                 path: "/" // Quais caminhos terao acesso ao cookie
             })
 
             setUsuario({
-                status,
-                message,
-                novo
+                cargo_usu,
+                idusu_usu,
+                nivel_usu,
+                token
             })
 
             // Passar para as proximas requisições o token
-            api.defaults.headers['Authorization'] = `Bearer ${novo.token}`
+            api.defaults.headers['Authorization'] = `Bearer ${token}`
 
             toast.success("Bem vindo!")
 
