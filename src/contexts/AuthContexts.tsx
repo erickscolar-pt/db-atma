@@ -50,6 +50,7 @@ export function signOut(){
         destroyCookie(undefined, '@nextauth.token')
         sessionStorage.removeItem('id')
         sessionStorage.removeItem('nivel')
+        sessionStorage.removeItem('cargo')
         Router.push('/')
     }catch{
         //console.log('erro ao deslogar')
@@ -68,7 +69,7 @@ export function AuthProvider({ children }: AuthProviderProps){
         // tentar pegar algo no cookie
         const { '@nextauth.token': token } = parseCookies();
 
-        ////console.log(token)
+        console.log(token)
     
         if(token){
         destroyCookie(undefined, '@nextauth.token')
@@ -76,9 +77,8 @@ export function AuthProvider({ children }: AuthProviderProps){
           api.put('/auth/refreshtoken',{
             oldtoken: token
           }).then(response => {
-            const {cargo_usu,idusu_usu,nivel_usu,token } = response.data.novo;
+            const {cargo_usu,idusu_usu,nivel_usu,token } = response.data;
 
-            //console.log('**************** token: ' + JSON.stringify(token) + "('**************** dados: " + JSON.stringify(response) )
             console.log(cargo_usu)
             console.log(idusu_usu)
             console.log(nivel_usu)
@@ -91,7 +91,7 @@ export function AuthProvider({ children }: AuthProviderProps){
     
             sessionStorage.setItem('id',idusu_usu)
             sessionStorage.setItem('nivel',nivel_usu) 
-            ////console.log('**************** dados: ' + idusu_usu)
+            sessionStorage.setItem('cargo',cargo_usu) 
             setUsuario({
                 cargo_usu,
                 idusu_usu,
@@ -100,9 +100,11 @@ export function AuthProvider({ children }: AuthProviderProps){
             })
     
           })
-          .catch(() => {
+          .catch((err) => {
+            console.log(err)
+            
             //Se deu erro deslogamos o user.
-            //signOut();
+            signOut();
           })
         }
     

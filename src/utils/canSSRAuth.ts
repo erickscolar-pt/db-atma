@@ -23,7 +23,7 @@ export function canSSRAuth<P>(fn: GetServerSideProps<P>){
       return await fn(ctx);
     }catch(err){
       if(err instanceof AuthTokenError){
-        //destroyCookie(ctx, '@nextauth.token');
+        destroyCookie(ctx, '@nextauth.token');
 
         return{
           redirect:{

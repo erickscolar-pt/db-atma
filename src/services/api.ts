@@ -22,7 +22,7 @@ export function setupAPIClient(ctx = undefined){
             // qualquer erro 401 (nao autorizado) deve deslogar usuario
             if(typeof window !== undefined){
                 //chamar a função para deslogar o usuario
-                //signOut()
+                signOut()
             } else {
                 return Promise.reject(new AuthTokenError())
             }

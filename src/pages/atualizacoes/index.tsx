@@ -8,6 +8,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import InputMask from 'react-input-mask'
 import Router, { useRouter } from 'next/router'
+import * as XLSX from 'xlsx'
 
 
 type ItemPropsFuncionarios = {
@@ -38,7 +39,7 @@ interface ListaFuncionario {
 }
 export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
 
-    const [funcionarios, setFuncionarios] = useState(listaFuncionario || [])
+    const [funcionarios] = useState(listaFuncionario || [])
     const [cargoUser, setCargoUser] = useState(0)
     const router = useRouter()
     /* deminido */
@@ -49,8 +50,38 @@ export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
     const [checkControl, setCheckControl] = useState(0)
     const [checkTrueOrFalseControl, setCheckTrueOrFalseControl] = useState()
     const [selectStatus, setSelectStatus] = useState(0)
+    let funcionariosXlsx = []
+    /* Relatorio */
+    function handleExport() {
+        var data = funcionariosXlsx
+        //console.log(data)
+        if(+selectStatus === 0 ){
+            toast.warning('Selecione um status para download do relatorio')
+            return;
+        }
+        let separator = ''
+        let newDate = new Date()
+        let date = newDate.getDate();
+        let month = newDate.getMonth() + 1;
+        let year = newDate.getFullYear();
+        let h = newDate.getHours();
+        let m = newDate.getMinutes();
+        let s = newDate.getSeconds();
 
+        let datahora = `${date}${separator}${month < 10 ? `0${month}` : `${month}`}${separator}${year}_${h}${separator}${m}${separator}${s}`
 
+        ////console.log(datahora)
+
+        var wb = XLSX.utils.book_new(),
+            ws = XLSX.utils.json_to_sheet(data);
+
+        XLSX.utils.book_append_sheet(wb, ws, "Relatorio")
+
+        XLSX.writeFile(wb, "atualizacoes" + datahora + ".xlsx");
+
+        toast.success("Download concluido.")
+    }
+    /* Fim Relatorio */
     /* funcionalidades demitido e ativo */
     function selecionaStatus(event) {
         setSelectStatus(event.target.value)
@@ -62,9 +93,9 @@ export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
     }
 
     if (checkTrueOrFalseSistema === true) {
-        handleRegistro(checkSistema, 0, 'sistema')
-    } else if (checkTrueOrFalseSistema == false) {
         handleRegistro(checkSistema, 1, 'sistema')
+    } else if (checkTrueOrFalseSistema == false) {
+        handleRegistro(checkSistema, 0, 'sistema')
     }
 
     function selectTi(event) {
@@ -73,9 +104,9 @@ export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
     }
 
     if (checkTrueOrFalseTi === true) {
-        handleRegistro(checkTi, 0, 'ti')
-    } else if (checkTrueOrFalseTi == false) {
         handleRegistro(checkTi, 1, 'ti')
+    } else if (checkTrueOrFalseTi == false) {
+        handleRegistro(checkTi, 0, 'ti')
     }
 
     function selectControl(event) {
@@ -84,14 +115,17 @@ export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
     }
 
     if (checkTrueOrFalseControl === true) {
-        handleRegistro(checkControl, 0, 'control')
-    } else if (checkTrueOrFalseControl == false) {
         handleRegistro(checkControl, 1, 'control')
+    } else if (checkTrueOrFalseControl == false) {
+        handleRegistro(checkControl, 0, 'control')
     }
 
     /* fim funcionalidades demitido */
 
     /* registro */
+    function reload() {
+        router.reload();
+    }
     async function handleRegistro(idfunc_func, sis_func, area) {
 
         const apiClient = setupAPIClient();
@@ -162,8 +196,17 @@ export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
         disableControl = false
     }
 
-    console.log(disableSis)
+    console.log(selectStatus)
+    funcionarios.map((res) => {
+        //console.log(res)
 
+        if (+selectStatus === 1 && res.dtdem_func === null) {
+            funcionariosXlsx.push(res)
+        }
+        if (+selectStatus === 2 && res.dtdem_func !== null) {
+            funcionariosXlsx.push(res)
+        }
+    })
 
     return (
         <>
@@ -182,6 +225,11 @@ export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
                                 <option value="2">Demitido</option>
                             </select>
                         </div>
+                        <div className={styles.boxButton}>
+                            <button type="button" onClick={reload}>Salvar</button>
+                            <button type="button" onClick={handleExport} className={styles.xlsx} >XLSX</button>
+                        </div>
+
                     </div>
                 </div>
 
@@ -205,7 +253,7 @@ export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
                                 return (
                                     funcionarios.ctcust_func != null ?
                                         +selectStatus === 1 && funcionarios.dtdem_func === null ?
-                                            funcionarios.sis_func.toString().concat(funcionarios.ti_func.toString(), funcionarios.ctrl_func.toString()) === '111' ?
+                                            funcionarios.sis_func == null || funcionarios.ti_func == null || funcionarios.ctrl_func == null ?
                                                 <tr key={funcionarios.idatma_func}>
                                                     <td>{funcionarios.nome_func}</td>
                                                     <td>{funcionarios.docu_func} </td>
@@ -215,37 +263,37 @@ export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
                                                     <td>{funcionarios.chmes_func / 4}</td>
                                                     <td>
                                                         {
-                                                            funcionarios.sis_func === 0 ?
+                                                            funcionarios.sis_func === 1 ?
                                                                 cargoUser === 1 || cargoUser === 2 ?
-                                                                    <input disabled={disableSis} defaultChecked={funcionarios.sis_func === 0} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
+                                                                    <input disabled={disableSis} defaultChecked={funcionarios.sis_func === 1} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
                                                                     : funcionarios.dtdem_func !== null ?
-                                                                        <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableSis} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
+                                                                        <input defaultChecked={funcionarios.sis_func === 1} disabled={disableSis} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
                                                                         : <MdDoneAll size={20} />
-                                                                : <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableSis} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
+                                                                : <input defaultChecked={funcionarios.sis_func === 1} disabled={disableSis} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
 
                                                         }
                                                     </td>
                                                     <td>
                                                         {
-                                                            funcionarios.ti_func === 0 ?
+                                                            funcionarios.ti_func === 1 ?
                                                                 cargoUser === 1 || cargoUser === 2 ?
-                                                                    <input disabled={disableTi} defaultChecked={funcionarios.ti_func === 0} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
+                                                                    <input disabled={disableTi} defaultChecked={funcionarios.ti_func === 1} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
                                                                     : funcionarios.dtdem_func != null ?
-                                                                        <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableTi} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
+                                                                        <input defaultChecked={funcionarios.ti_func === 1} disabled={disableTi} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
                                                                         : <MdDoneAll size={20} />
-                                                                : <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableTi} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
+                                                                : <input defaultChecked={funcionarios.ti_func === 1} disabled={disableTi} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
 
                                                         }
                                                     </td>
                                                     <td>
                                                         {
-                                                            funcionarios.ctrl_func === 0 ?
+                                                            funcionarios.ctrl_func === 1 ?
                                                                 cargoUser === 1 || cargoUser === 2 ?
-                                                                    <input disabled={disableControl} defaultChecked={funcionarios.ctrl_func === 0} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
+                                                                    <input disabled={disableControl} defaultChecked={funcionarios.ctrl_func === 1} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
                                                                     : funcionarios.dtdem_func != null ?
-                                                                        <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableControl} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
+                                                                        <input defaultChecked={funcionarios.ctrl_func === 1} disabled={disableControl} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
                                                                         : <MdDoneAll size={20} />
-                                                                : <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableControl} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
+                                                                : <input defaultChecked={funcionarios.ctrl_func === 1} disabled={disableControl} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
 
                                                         }
                                                     </td>
@@ -255,7 +303,7 @@ export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
                                                 +selectStatus === 2 && funcionarios.dtdem_func !== null ?
                                                     <>
                                                         {
-                                                            funcionarios.sis_func.toString().concat(funcionarios.ti_func.toString(), funcionarios.ctrl_func.toString()) === '000' ?
+                                                            funcionarios.sis_func.toString().concat(funcionarios.ti_func.toString(), funcionarios.ctrl_func.toString()) !== '000' ?
                                                                 <>
                                                                     <tr key={funcionarios.idatma_func}>
                                                                         <td>{funcionarios.nome_func}</td>
@@ -266,37 +314,37 @@ export default function Atualizacoes({ listaFuncionario }: ListaFuncionario) {
                                                                         <td>{funcionarios.chmes_func / 4}</td>
                                                                         <td>
                                                                             {
-                                                                                funcionarios.sis_func === 0 ?
+                                                                                funcionarios.sis_func === 1 ?
                                                                                     cargoUser === 1 || cargoUser === 2 ?
-                                                                                        <input disabled={disableSis} defaultChecked={funcionarios.sis_func === 0} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
+                                                                                        <input disabled={disableSis} defaultChecked={funcionarios.sis_func === 1} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
                                                                                         : funcionarios.dtdem_func !== null ?
-                                                                                            <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableSis} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
+                                                                                            <input defaultChecked={funcionarios.ctrl_func === 1} disabled={disableSis} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
                                                                                             : <MdDoneAll size={20} />
-                                                                                    : <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableSis} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
+                                                                                    : <input defaultChecked={funcionarios.ctrl_func === 1} disabled={disableSis} type="checkbox" onChange={selectSistema} value={funcionarios.idfunc_func} />
 
                                                                             }
                                                                         </td>
                                                                         <td>
                                                                             {
-                                                                                funcionarios.ti_func === 0 ?
+                                                                                funcionarios.ti_func === 1 ?
                                                                                     cargoUser === 1 || cargoUser === 2 ?
-                                                                                        <input disabled={disableTi} defaultChecked={funcionarios.ti_func === 0} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
+                                                                                        <input disabled={disableTi} defaultChecked={funcionarios.ti_func === 1} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
                                                                                         : funcionarios.dtdem_func != null ?
-                                                                                            <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableTi} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
+                                                                                            <input defaultChecked={funcionarios.ctrl_func === 1} disabled={disableTi} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
                                                                                             : <MdDoneAll size={20} />
-                                                                                    : <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableTi} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
+                                                                                    : <input defaultChecked={funcionarios.ctrl_func === 1} disabled={disableTi} type="checkbox" onChange={selectTi} value={funcionarios.idfunc_func} />
 
                                                                             }
                                                                         </td>
                                                                         <td>
                                                                             {
-                                                                                funcionarios.ctrl_func === 0 ?
+                                                                                funcionarios.ctrl_func === 1 ?
                                                                                     cargoUser === 1 || cargoUser === 2 ?
-                                                                                        <input disabled={disableControl} defaultChecked={funcionarios.ctrl_func === 0} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
+                                                                                        <input disabled={disableControl} defaultChecked={funcionarios.ctrl_func === 1} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
                                                                                         : funcionarios.dtdem_func != null ?
-                                                                                            <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableControl} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
+                                                                                            <input defaultChecked={funcionarios.ctrl_func === 1} disabled={disableControl} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
                                                                                             : <MdDoneAll size={20} />
-                                                                                    : <input defaultChecked={funcionarios.ctrl_func === 0} disabled={disableControl} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
+                                                                                    : <input defaultChecked={funcionarios.ctrl_func === 1} disabled={disableControl} type="checkbox" onChange={selectControl} value={funcionarios.idfunc_func} />
 
                                                                             }
                                                                         </td>

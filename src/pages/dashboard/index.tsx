@@ -297,7 +297,7 @@ export default function Dashboard(
 
         XLSX.utils.book_append_sheet(wb, ws, "Relatorio")
 
-        XLSX.writeFile(wb, "relatorio" + datahora + ".xlsx");
+        XLSX.writeFile(wb, "equipes" + datahora + ".xlsx");
 
         toast.success("Download concluido.")
     }
@@ -310,12 +310,6 @@ export default function Dashboard(
     }, []);
     const cargo = cargoUser;
     //console.log(cargo)
-    if(isNaN(cargo)){
-        if(process.browser){
-            //console.log('refresh')
-            router.reload();
-        }
-    }
 
     return(
         <>
@@ -347,7 +341,7 @@ export default function Dashboard(
                         <option value="0">Selecione</option>
                         {listaUsuarios.map((usu,index)=>{
                             return(usu.idcarg_usu == 4 || usu.idcarg_usu == 1 ?
-                                <option value={usu.idusu_usu} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</option>
+                                <option value={usu.idusu_usu} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</option>
                                 :<></>
                             )
                         })}
@@ -360,7 +354,7 @@ export default function Dashboard(
                         <option value="0">Selecione</option>
                         {listaUsuarios.map((usu,index)=>{
                             return(usu.idcarg_usu == 3  || usu.idcarg_usu == 1 ?
-                                <option value={usu.idusu_usu} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</option>
+                                <option value={usu.idusu_usu} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</option>
                                 :<></>
                             )
                         })}
@@ -373,7 +367,7 @@ export default function Dashboard(
                         <option value="0">Selecione</option>
                         {listaUsuarios.map((usu,index)=>{
                             return(usu.idcarg_usu == 2  || usu.idcarg_usu == 1 ?
-                                <option value={usu.idusu_usu} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</option>
+                                <option value={usu.idusu_usu} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</option>
                                 :<></>
                             )
                         })}
@@ -434,11 +428,11 @@ export default function Dashboard(
                                     <select onChange={selecionaSupervisorTable} >
                                         <option value="">Selecione</option>
                                         {listaUsuarios.map((usu,index)=>{
-                                            return(usu.idcarg_usu == 4  ?
+                                            return(usu.idcarg_usu === 4  ?
                                                 usu.usuccst.map((result)=>{
                                                     return(
-                                                        funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst.concat(result.centrocusto.nome_ccst) === funcionarios.ctcust_func.concat(funcionarios.depto_func) ?
-                                                        <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+4} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</option>
+                                                        funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst === funcionarios.ctcust_func ?
+                                                        <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+4} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</option>
                                                         :<></>
                                                     )
                                                 })
@@ -446,7 +440,7 @@ export default function Dashboard(
                                             )
                                         })}
                                     </select>
-                                    :<></>}
+                                    :<>Somente Supervisor</>}
                                 </>:<>
                                         {listaUsuarios.map((usu,index)=>{
                                             return(
@@ -454,15 +448,15 @@ export default function Dashboard(
                                                     +cargo == 1 || +cargo == 2 || +cargo == 3 || +cargo == 4?
                                                     <>
                                                     <div className={styles.adm}>
-                                                    <div className={styles.old}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</div>
+                                                    <div className={styles.old}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</div>
                                                     <select onChange={selecionaSupervisorTable} >
                                                         <option value="">Selecione</option>
                                                         {listaUsuarios.map((usu,index)=>{
                                                             return(usu.idcarg_usu == 4  ?
                                                                 usu.usuccst.map((result)=>{
                                                                     return(
-                                                                        funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst.concat(result.centrocusto.nome_ccst) === funcionarios.ctcust_func.concat(funcionarios.depto_func) ?
-                                                                        <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+4} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</option>
+                                                                        funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst === funcionarios.ctcust_func ?
+                                                                        <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+4} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</option>
                                                                         :<></>
                                                                     )
                                                                 })
@@ -472,7 +466,7 @@ export default function Dashboard(
                                                     </select>
                                                     </div>
                                                     </>:
-                                                    usu.login_usu.substring(0,usu.login_usu.indexOf('.'))
+                                                    usu.login_usu.substring(0,usu.login_usu.indexOf('@'))
                                                 :<></>
                                             )
                                         })}
@@ -486,8 +480,8 @@ export default function Dashboard(
                                             return(usu.idcarg_usu == 3 && usu.usuccst ?
                                                 usu.usuccst.map((result)=>{
                                                     return(
-                                                        funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst.concat(result.centrocusto.nome_ccst) === funcionarios.ctcust_func.concat(funcionarios.depto_func) ?
-                                                        <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+4} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</option>
+                                                        funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst === funcionarios.ctcust_func ?
+                                                        <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+3} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</option>
                                                         :<></>
                                                     )
                                                 })
@@ -503,15 +497,15 @@ export default function Dashboard(
                                                 +cargo == 1 || +cargo == 2 || +cargo == 3 ?
                                                 <>
                                                 <div className={styles.adm}>
-                                                <div className={styles.old}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</div>
+                                                <div className={styles.old}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</div>
                                                 <select onChange={selecionaCoordenadorTable} >
                                                     <option value="">Selecione</option>
                                                     {listaUsuarios.map((usu,index)=>{
                                                         return(usu.idcarg_usu == 3 && usu.usuccst  || usu.idcarg_usu == 2?
                                                             usu.usuccst.map((result)=>{
                                                                 return(
-                                                                    funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst.concat(result.centrocusto.nome_ccst) === funcionarios.ctcust_func.concat(funcionarios.depto_func) ?
-                                                                    <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+3} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</option>
+                                                                    funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst === funcionarios.ctcust_func ?
+                                                                    <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+3} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</option>
                                                                     :<></>
                                                                 )
                                                             })
@@ -521,7 +515,7 @@ export default function Dashboard(
                                                 </select>
                                                 </div>
                                                 </>:
-                                                usu.login_usu.substring(0,usu.login_usu.indexOf('.'))
+                                                usu.login_usu.substring(0,usu.login_usu.indexOf('@'))
                                                 :<></>
                                             )
                                         })}
@@ -535,8 +529,8 @@ export default function Dashboard(
                                             return(usu.idcarg_usu == 2  || usu.idcarg_usu == 1 ?
                                                 usu.usuccst.map((result)=>{
                                                     return(
-                                                        funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst.concat(result.centrocusto.nome_ccst) === funcionarios.ctcust_func.concat(funcionarios.depto_func) ?
-                                                        <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+4} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</option>
+                                                        funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst === funcionarios.ctcust_func ?
+                                                        <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+2} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</option>
                                                         :<></>
                                                     )
                                                 })
@@ -552,15 +546,15 @@ export default function Dashboard(
                                                 +cargo == 1 || +cargo == 2 ?
                                                 <>
                                                 <div className={styles.adm}>
-                                                <div className={styles.old}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</div>
+                                                <div className={styles.old}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</div>
                                                 <select onChange={selecionaGerenteTable} >
                                                     <option value="">Selecione</option>
                                                     {listaUsuarios.map((usu,index)=>{
                                                         return(usu.idcarg_usu == 2  || usu.idcarg_usu == 1 ?
                                                             usu.usuccst.map((result)=>{
                                                                 return(
-                                                                    funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst.concat(result.centrocusto.nome_ccst) === funcionarios.ctcust_func.concat(funcionarios.depto_func) ?
-                                                                    <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+2} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('.'))}</option>
+                                                                    funcionarios.ctcust_func != null && result.centrocusto.nivel_ccst === funcionarios.ctcust_func ?
+                                                                    <option value={funcionarios.idfunc_func+'.'+usu.idusu_usu+'.'+2} key={usu.idusu_usu}>{usu.login_usu.substring(0,usu.login_usu.indexOf('@'))}</option>
                                                                     :<></>
                                                                 )
                                                             })
@@ -570,7 +564,7 @@ export default function Dashboard(
                                                 </select>
                                                 </div>
                                                 </>:
-                                                usu.login_usu.substring(0,usu.login_usu.indexOf('.'))
+                                                usu.login_usu.substring(0,usu.login_usu.indexOf('@'))
                                                 :<></>
                                             )
                                         })}                                
